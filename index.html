@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Special Delivery</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans, Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cream: '#FFFDF7',
+            peach: '#FFD6BA',
+            coral: '#FF5E7E',
+            coralDark: '#E64565',
+            mint: '#06D6A0',
+            lavender: '#7C5DFA',
+            butter: '#FFD166',
+            ink: '#1E1B18',
+          },
+          boxShadow: {
+            retro: '4px 4px 0px 0px #1E1B18',
+            'retro-sm': '2px 2px 0px 0px #1E1B18',
+            'retro-lg': '7px 7px 0px 0px #1E1B18',
+            glass: '0 20px 40px -15px rgba(255, 94, 126, 0.2)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-cream: #FFFDF7;
+      --ink: #1E1B18;
+      --coral: #FF5E7E;
+      --peach: #FFD6BA;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(255, 214, 186, 0.55) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(226, 212, 255, 0.5) 0%, transparent 45%),
+        radial-gradient(rgba(30, 27, 24, 0.08) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 22px 22px;
+      color: var(--ink);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* Tactile Glassmorphism Bento Card */
+    .bento-glass {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 2.5px solid #1E1B18;
+      box-shadow: 6px 6px 0px #1E1B18;
+    }
+
+    .bento-card {
+      background: #FFFFFF;
+      border: 2px solid #1E1B18;
+      box-shadow: 3px 3px 0px #1E1B18;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, background-color 0.2s ease;
+    }
+
+    .bento-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px #1E1B18;
+    }
+
+    .bento-card:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #1E1B18;
+    }
+
+    .bento-card.selected {
+      background: #FFD166;
+      border-color: #1E1B18;
+      box-shadow: 4px 4px 0px #FF5E7E;
+    }
+
+    /* Retro Button */
+    .btn-retro {
+      border: 2.5px solid #1E1B18;
+      box-shadow: 4px 4px 0px #1E1B18;
+      transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-retro:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px #1E1B18;
+    }
+
+    .btn-retro:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #1E1B18;
+    }
+
+    /* 3D Interactive Gift Box */
+    .gift-scene {
+      perspective: 900px;
+      width: 190px;
+      height: 190px;
+      margin: 0 auto;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .gift-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: floatGift 3.2s ease-in-out infinite;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes floatGift {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(-2deg);
+      }
+
+      50% {
+        transform: translateY(-12px) rotate(2deg);
+      }
+    }
+
+    @keyframes shakeGift {
+      0% {
+        transform: rotate(0deg) scale(1);
+      }
+
+      20% {
+        transform: rotate(-10deg) scale(1.07);
+      }
+
+      40% {
+        transform: rotate(10deg) scale(1.09);
+      }
+
+      60% {
+        transform: rotate(-7deg) scale(1.05);
+      }
+
+      80% {
+        transform: rotate(7deg) scale(1.03);
+      }
+
+      100% {
+        transform: rotate(0deg) scale(1);
+      }
+    }
+
+    .gift-shake {
+      animation: shakeGift 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+    }
+
+    @keyframes popLid {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(-65px) rotate(-14deg) scale(1.08);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-120px) rotate(-25deg) scale(0.85);
+        opacity: 0;
+      }
+    }
+
+    .lid-open {
+      animation: popLid 0.65s forwards cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+
+    /* Sparkle particles */
+    .sparkle-dot {
+      position: fixed;
+      pointer-events: none;
+      z-index: 60;
+      font-size: 1.25rem;
+      animation: flyParticle 0.85s forwards cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes flyParticle {
+      0% {
+        transform: translate(0, 0) scale(0.5) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(1.25) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    /* Stage Transition */
+    .stage-panel {
+      animation: stageEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes stageEnter {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Scratch Card Container */
+    .scratch-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 2.5px solid #1E1B18;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.08);
+      touch-action: none;
+      user-select: none;
+    }
+
+    #scratchCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      cursor: crosshair;
+      transition: opacity 0.45s ease;
+    }
+
+    /* Ticket Perforation Cutouts */
+    .ticket-notch-left,
+    .ticket-notch-right {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-color: #FDF8F5;
+      border: 2.5px solid #1E1B18;
+      border-radius: 9999px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 15;
+    }
+
+    .ticket-notch-left {
+      left: -14px;
+    }
+
+    .ticket-notch-right {
+      right: -14px;
+    }
+
+    /* Decorative Barcode */
+    .barcode-stripes {
+      background: repeating-linear-gradient(90deg,
+          #1E1B18 0px,
+          #1E1B18 3px,
+          transparent 3px,
+          transparent 6px,
+          #1E1B18 6px,
+          #1E1B18 7px,
+          transparent 7px,
+          transparent 11px,
+          #1E1B18 11px,
+          #1E1B18 15px,
+          transparent 15px,
+          transparent 18px);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #FDF8F5;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1E1B18;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col items-center justify-between p-4 sm:p-6">
+
+  <!-- Confetti Canvas (Top Layer) -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- Toast Notification Banner -->
+  <div id="toastBanner"
+    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-3">
+    <div
+      class="bg-ink text-cream px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg flex items-center gap-2 border border-peach/30">
+      <span id="toastIcon">✨</span>
+      <span id="toastText">Notifikasi</span>
+    </div>
+  </div>
+
+  <!-- Top Header Bar -->
+  <header class="w-full max-w-xl flex items-center justify-between z-20 mb-3 gap-2">
+    <div id="vipBadgeTrigger"
+      class="inline-flex items-center gap-2 bg-white/90 border-2 border-ink px-3.5 py-1.5 rounded-full shadow-retro-sm select-none cursor-pointer">
+      <span class="w-2.5 h-2.5 rounded-full bg-coral animate-pulse"></span>
+      <span class="font-mono text-xs font-bold tracking-tight uppercase">VIP PASS // <span id="headerBadge">FOR
+          YOU</span></span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Admin Mode Active Pill (Only visible when Admin is unlocked) -->
+      <span id="adminActiveBadge"
+        class="hidden sm:inline-flex items-center gap-1 bg-butter border-2 border-ink px-2.5 py-1 rounded-full text-[11px] font-mono font-bold shadow-retro-sm">
+        🔓
+      </span>
+
+      <!-- Sound Effects Toggle -->
+      <button id="soundToggleBtn" title="Efek Suara" aria-label="Toggle Efek Suara"
+        class="w-10 h-10 rounded-full bg-white border-2 border-ink shadow-retro-sm flex items-center justify-center hover:bg-butter transition active:translate-y-0.5 flex-shrink-0">
+        <span id="soundIcon" class="text-base">🔊</span>
+      </button>
+
+      <!-- Creator Mode Gear Button (Hidden in Recipient Mode) -->
+      <button id="openCreatorBtn" title="Kustomisasi Kado & Undangan (Admin)" aria-label="Pengaturan Kado Admin"
+        class="w-10 h-10 rounded-full bg-butter border-2 border-ink shadow-retro-sm flex items-center justify-center hover:bg-peach transition active:translate-y-0.5 group flex-shrink-0">
+        <svg class="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-90" fill="none"
+          stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Interactive Container -->
+  <main class="w-full max-w-xl my-auto z-10">
+
+    <!-- Step Progress Dots -->
+    <div id="stepDots" class="flex items-center justify-center gap-2 mb-4">
+      <div class="step-dot h-2.5 w-8 rounded-full bg-coral border border-ink transition-all duration-300"></div>
+      <div class="step-dot h-2.5 w-2.5 rounded-full bg-white border border-ink transition-all duration-300"></div>
+      <div class="step-dot h-2.5 w-2.5 rounded-full bg-white border border-ink transition-all duration-300"></div>
+      <div class="step-dot h-2.5 w-2.5 rounded-full bg-white border border-ink transition-all duration-300"></div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAHAP 1: KOTAK KADO MISTERI (INTERACTIVE UNBOXING)                    -->
+    <!-- ===================================================================== -->
+    <section id="stage1" class="stage-panel bento-glass rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden">
+      <div
+        class="inline-block bg-butter border-2 border-ink rounded-full px-3.5 py-1 text-xs font-bold mb-3 shadow-retro-sm">
+        Something Special for <span id="s1RecipientName" class="uppercase text-coral">KAMU</span>
+      </div>
+
+      <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink mb-2">
+        Haii, ini gak aneh aneh sih isinya... (Jk)
+      </h1>
+      <p class="text-sm sm:text-base text-ink/75 max-w-sm mx-auto mb-6">
+        there is something for you. Coba buka segelnya duluu
+      </p>
+
+      <!-- 3D CSS Gift Box -->
+      <div id="giftBoxArea" class="gift-scene my-4 flex items-center justify-center" role="button" tabindex="0"
+        aria-label="Ketuk kotak kado">
+        <div id="giftWrapper" class="gift-wrapper flex flex-col items-center justify-center">
+          <!-- Floating Tag -->
+          <div id="giftTag"
+            class="absolute -top-2 -right-3 z-20 bg-mint border-2 border-ink rounded-xl px-2.5 py-1 text-[11px] font-mono font-bold shadow-retro-sm rotate-12">
+            TAP ME!
+          </div>
+
+          <!-- Lid & Ribbon Bow -->
+          <div id="giftLid" class="relative z-10 w-44 flex flex-col items-center">
+            <!-- Bow Loops -->
+            <div class="flex items-end justify-center -mb-1">
+              <div
+                class="w-9 h-7 rounded-full border-[3px] border-ink bg-coral -rotate-12 transform origin-bottom-right">
+              </div>
+              <div class="w-4 h-5 rounded-t-lg border-[3px] border-ink bg-butter z-10 -mx-1"></div>
+              <div class="w-9 h-7 rounded-full border-[3px] border-ink bg-coral rotate-12 transform origin-bottom-left">
+              </div>
+            </div>
+            <!-- Lid Top -->
+            <div
+              class="w-44 h-9 bg-peach border-[3px] border-ink rounded-xl shadow-retro-sm relative flex justify-center overflow-hidden">
+              <div class="w-7 h-full bg-coral border-x-[3px] border-ink"></div>
+            </div>
+          </div>
+
+          <!-- Box Base -->
+          <div
+            class="w-40 h-32 bg-white border-[3px] border-t-0 border-ink rounded-b-2xl shadow-retro relative flex justify-center overflow-hidden">
+            <!-- Vertical Ribbon -->
+            <div class="w-7 h-full bg-coral border-x-[3px] border-ink"></div>
+            <!-- Decorative Retro Shine -->
+            <div class="absolute top-3 left-3 w-2.5 h-8 bg-peach/70 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tap Progress Indicator -->
+      <div class="mt-6 max-w-xs mx-auto">
+        <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+          <span id="tapInstruction">Ketuk 3x untuk membuka segel kado</span>
+          <span id="tapCounter" class="font-mono bg-ink text-white px-2 py-0.5 rounded-md">0 / 3</span>
+        </div>
+        <div class="w-full h-4 bg-cream border-2 border-ink rounded-full overflow-hidden p-0.5">
+          <div id="tapProgressBar" class="h-full bg-coral rounded-full transition-all duration-300" style="width: 0%;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAHAP 2: KARTU GOSOK / SCRATCH-OFF REVEAL                             -->
+    <!-- ===================================================================== -->
+    <section id="stage2" class="hidden stage-panel bento-glass rounded-3xl p-6 sm:p-8 text-center relative">
+      <div
+        class="inline-flex items-center gap-1.5 bg-lavender text-white border-2 border-ink rounded-full px-3.5 py-1 text-xs font-bold mb-3 shadow-retro-sm">
+        <span> ohhh Masih Ada Isinya Lagi Tenryata fah</span>
+      </div>
+
+      <h2 class="font-display text-2xl sm:text-3xl font-bold text-ink mb-1.5">
+        Coba digosok dulu dehh
+      </h2>
+      <p class="text-xs sm:text-sm text-ink/75 mb-5">
+        Usap layar pakai jari atau kursor buat lihat isinyaa
+      </p>
+
+      <!-- Scratch-Off Golden Ticket -->
+      <div class="scratch-container bg-gradient-to-br from-butter via-peach to-coral/30 mx-auto max-w-md relative">
+        <!-- Ticket Side Notches -->
+        <div class="ticket-notch-left"></div>
+        <div class="ticket-notch-right"></div>
+
+        <!-- Underlying Golden Ticket Message -->
+        <div class="w-full h-full flex flex-col items-center justify-center p-5 text-center select-none">
+          <span
+            class="font-mono text-[11px] font-bold tracking-widest uppercase bg-ink text-butter px-2.5 py-0.5 rounded-full mb-2">
+            FINALLY
+          </span>
+          <h3 class="font-display text-xl sm:text-2xl font-extrabold text-ink leading-snug mb-1.5">
+            Halloo <span id="s2RecipientName" class="text-coral underline decoration-wavy">Kamu</span>, are you
+            available to go out with me??
+          </h3>
+          <p id="s2TeaserText" class="text-xs sm:text-sm font-medium text-ink/85 max-w-xs">
+            Tiket ini berlaku untuk berkali kali sesi quality time, ketawa bareng, dan bebas dari pikiran penat.
+          </p>
+        </div>
+
+        <!-- HTML5 Canvas Scratch Foil -->
+        <canvas id="scratchCanvas"></canvas>
+      </div>
+
+      <!-- Scratch Actions & Hint -->
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-3 max-w-md mx-auto">
+        <div class="text-xs font-semibold text-ink/70 flex items-center gap-1.5">
+          <span>🪙</span>
+          <span id="scratchPercentText">Tergosok: 0%</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="revealAllBtn" type="button"
+            class="px-3.5 py-2 rounded-xl bg-white border-2 border-ink text-xs font-bold shadow-retro-sm hover:bg-butter transition">
+            langsungg bukaa
+          </button>
+          <button id="toStage3Btn" type="button"
+            class="hidden px-4 py-2 rounded-xl bg-coral text-white border-2 border-ink text-xs font-bold shadow-retro-sm hover:bg-coralDark transition">
+            Pilih Mau Kemanaa Aja
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAHAP 3: AJAKAN & PILIHAN AKTIVITAS DATE (INTERACTIVE BENTO CARDS)    -->
+    <!-- ===================================================================== -->
+    <section id="stage3" class="hidden stage-panel bento-glass rounded-3xl p-5 sm:p-7 relative">
+      <!-- Personal Message Bubble -->
+      <div class="bg-cream border-2 border-ink rounded-2xl p-4 mb-5 relative shadow-retro-sm">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs font-mono font-bold text-coral uppercase">Dari: <span
+              id="s3SenderName">Seseorang</span></span>
+          <span class="text-xs bg-mint border border-ink px-2 py-0.5 rounded-full font-bold">WHY I ASK YOU TO GO
+            OUT?</span>
+        </div>
+        <p id="s3MainMessage" class="text-sm sm:text-base font-medium text-ink leading-relaxed">
+          Setelah kemarin gak jadi karena satu dan lain hal, jadi gw kepikiran buat ngajak lagii.
+        </p>
+      </div>
+
+      <!-- Bento Grid: Date Activity Options -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2.5">
+          <h3 class="font-display text-base sm:text-lg font-bold text-ink">
+            1. Mau ngapain kita?
+          </h3>
+          <span class="text-[11px] font-semibold text-ink/60">Pilih satu kartu</span>
+        </div>
+
+        <div id="activityGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Cards populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Time & Location Bento Strip -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+        <div class="bg-peach/45 border-2 border-ink rounded-2xl p-3">
+          <label for="dateTimeInput" class="block text-[11px] font-mono font-bold uppercase text-ink/75 mb-1">
+            🗓️ Kapan (Sebisaa luu ajaa)
+          </label>
+          <input id="dateTimeInput" type="text"
+            class="w-full bg-white border-2 border-ink rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-coral"
+            value="Sabtu ini, jam 16.30 WIB" />
+        </div>
+
+        <div class="bg-lavender/20 border-2 border-ink rounded-2xl p-3">
+          <label for="locationInput" class="block text-[11px] font-mono font-bold uppercase text-ink/75 mb-1">
+            📍 Dimanaa?
+          </label>
+          <input id="locationInput" type="text"
+            class="w-full bg-white border-2 border-ink rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-coral"
+            value="Aku jemput / Ketemu di tempat" />
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAHAP 4: KEPUTUSAN AKHIR (PLAYFUL UX)                               -->
+      <!-- =================================================================== -->
+      <div class="border-t-2 border-dashed border-ink/25 pt-4">
+        <p class="text-center font-display font-bold text-base sm:text-lg mb-3">
+          Gimana, deal ya?
+        </p>
+
+        <!-- Playful Decision Arena -->
+        <div id="decisionArena"
+          class="relative min-h-[116px] sm:min-h-[96px] w-full bg-cream/80 border-2 border-ink rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-center gap-3 overflow-hidden">
+          <!-- YES Button -->
+          <button id="yesBtn" type="button"
+            class="btn-retro z-20 bg-coral hover:bg-coralDark text-white font-display font-bold text-base sm:text-lg px-6 py-3 rounded-2xl flex items-center gap-2 cursor-pointer">
+            <span>Gas, Ayooooo!</span>
+
+          </button>
+
+          <!-- Playful Dodging NO Button -->
+          <button id="noBtn" type="button"
+            class="z-10 bg-white border-2 border-ink shadow-retro-sm text-ink font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer select-none">
+            hemmmm nantii dehh
+          </button>
+        </div>
+
+        <!-- Funny Dodge Caption -->
+        <p id="dodgeFeedback" class="text-center text-xs font-bold text-coral mt-2 min-h-[18px]"></p>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAHAP 4B: DIGITAL BOARDING PASS / DATE TICKET (CELEBRATION)           -->
+    <!-- ===================================================================== -->
+    <section id="stage4" class="hidden stage-panel">
+      <div class="text-center mb-4">
+        <span
+          class="inline-block bg-mint border-2 border-ink rounded-full px-4 py-1 text-xs font-extrabold uppercase tracking-wider shadow-retro-sm mb-2">
+          OKAYYYYYYYY!
+        </span>
+        <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-ink">
+          JANGANNN LUPAAA YAAA
+        </h2>
+      </div>
+
+      <!-- Official Digital Boarding Pass -->
+      <div id="boardingPassCard" class="bento-glass rounded-3xl overflow-hidden relative">
+        <!-- Top Ticket Header -->
+        <div class="bg-coral text-white px-6 py-4 border-b-2 border-ink flex items-center justify-between">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-widest opacity-90">BOARDING PASS // SPECIAL EDITION</p>
+            <h3 class="font-display text-xl font-extrabold tracking-tight">AYO KITA MAINNNN</h3>
+          </div>
+          <div
+            class="w-11 h-11 rounded-2xl bg-butter text-ink border-2 border-ink flex items-center justify-center text-xl shadow-retro-sm">
+          </div>
+        </div>
+
+        <!-- Ticket Body -->
+        <div class="p-6 bg-white relative">
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <span class="block font-mono text-[10px] font-bold uppercase text-ink/55">VIP PASSENGER</span>
+              <p id="ticketPassenger" class="font-display text-base sm:text-lg font-extrabold text-ink truncate">Kamu
+              </p>
+            </div>
+            <div>
+              <span class="block font-mono text-[10px] font-bold uppercase text-ink/55">HOST / PENGUNDANG</span>
+              <p id="ticketHost" class="font-display text-base sm:text-lg font-extrabold text-coral truncate">Aku</p>
+            </div>
+          </div>
+
+          <div class="bg-cream border-2 border-ink rounded-2xl p-3.5 mb-4">
+            <span class="block font-mono text-[10px] font-bold uppercase text-ink/60 mb-0.5">SELECTED ACTIVITY</span>
+            <p id="ticketActivity" class="font-display text-lg font-bold text-ink">☕ Nugas & Deep Talk</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+            <div class="bg-peach/40 border-2 border-ink rounded-xl p-3">
+              <span class="block font-mono text-[10px] font-bold uppercase text-ink/60">DATE & TIME</span>
+              <p id="ticketDateTime" class="font-bold text-ink mt-0.5">Maybe hari Minggu ini, jam 16.30 WIB</p>
+            </div>
+            <div class="bg-lavender/45 border-2 border-ink rounded-xl p-3">
+              <span class="block font-mono text-[10px] font-bold uppercase text-ink/60">MEETING POINT</span>
+              <p id="ticketLocation" class="font-bold text-ink mt-0.5">Aku jemput / Ketemu di tempat</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perforated Divider -->
+        <div class="relative bg-white px-6 py-2 flex items-center">
+          <div class="ticket-notch-left"></div>
+          <div class="w-full border-t-2 border-dashed border-ink/40"></div>
+          <div class="ticket-notch-right"></div>
+        </div>
+
+        <!-- Ticket Footer: Decorative Barcode & Booking Code -->
+        <div class="bg-butter/60 px-6 py-4 flex items-center justify-between gap-4">
+          <div class="flex-1">
+            <div class="barcode-stripes h-9 w-full rounded opacity-90 mb-1"></div>
+            <div class="flex justify-between font-mono text-[10px] font-bold text-ink/75">
+              <span id="ticketCode">PASS-2026</span>
+              <span>NON-REFUNDABLE</span>
+            </div>
+          </div>
+          <!-- Decorative Mini QR Matrix SVG -->
+          <div
+            class="w-14 h-14 bg-white border-2 border-ink rounded-xl p-1.5 flex-shrink-0 shadow-retro-sm flex items-center justify-center">
+            <svg viewBox="0 0 24 24" class="w-full h-full fill-ink">
+              <path
+                d="M2 2h7v7H2V2zm2 2v3h3V4H4zm11-2h7v7h-7V2zm2 2v3h3V4h-3zM2 15h7v7H2v-7zm2 2v3h3v-3H4zm9-2h2v2h-2v-2zm4 0h2v4h-2v-4zm-4 4h4v3h-4v-3zm6 1h3v2h-3v-2zm-8-9h2v4h-2v-4zm3 2h3v2h-3v-2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ticket Action Buttons -->
+      <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button id="whatsappBtn" type="button"
+          class="btn-retro bg-[#25D366] text-ink font-display font-bold text-sm py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2">
+          <span>💬</span>
+          <span>Kirim Jawaban via WhatsApp</span>
+        </button>
+
+        <button id="copyTicketBtn" type="button"
+          class="btn-retro bg-white text-ink font-display font-bold text-sm py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2">
+          <span>📸</span>
+          <span>Salin Info / Screenshot</span>
+        </button>
+      </div>
+
+      <div class="text-center mt-4">
+        <button id="replayBtn" type="button" class="text-xs font-bold underline text-ink/65 hover:text-ink">
+          ↺ Ulangi dari Awal
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Credit & Discrete Admin Lock Trigger -->
+  <footer class="w-full max-w-xl flex items-center justify-between mt-4 text-[11px] font-medium text-ink/55 z-10 px-1">
+    <span id="footerHintText">Made only for this special reason</span>
+    <button id="discreteAdminLockBtn" type="button" title="Akses Admin" aria-label="Verifikasi Admin"
+      class="w-7 h-7 rounded-full flex items-center justify-center text-ink/35 hover:text-ink hover:bg-white/80 transition">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+    </button>
+  </footer>
+
+  <!-- ======================================================================= -->
+  <!-- ADMIN PIN VERIFICATION MODAL                                            -->
+  <!-- ======================================================================= -->
+  <div id="adminPinModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+    <div id="adminPinCard"
+      class="bg-cream border-[3px] border-ink shadow-retro-lg rounded-3xl w-full max-w-sm overflow-hidden">
+      <div class="bg-lavender text-white px-5 py-4 border-b-2 border-ink flex items-center justify-between">
+        <div>
+          <span
+            class="font-mono text-[10px] font-bold uppercase tracking-wider bg-ink text-butter px-2 py-0.5 rounded-full">RESTRICTED
+            ACCESS</span>
+          <h3 class="font-display text-lg font-extrabold mt-1">Verifikasi Admin 🔐</h3>
+        </div>
+        <button id="closePinModalBtn" type="button"
+          class="w-8 h-8 rounded-full bg-white text-ink border-2 border-ink font-bold flex items-center justify-center hover:bg-coral hover:text-white transition">
+          ✕
+        </button>
+      </div>
+
+      <form id="adminPinForm" class="p-5 space-y-4">
+        <p class="text-xs sm:text-sm text-ink/80 leading-relaxed">
+          Area <strong>Kustomisasi Kado &amp; Undangan</strong> dilindungi PIN Admin. Masukkan PIN 4–6 digit untuk
+          membuka akses.
+        </p>
+
+        <div>
+          <label for="adminPinInput" class="block font-mono text-xs font-bold uppercase mb-1.5">PIN Admin</label>
+          <input id="adminPinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+            placeholder="••••" required
+            class="w-full bg-white border-2 border-ink rounded-2xl px-4 py-3 text-center font-mono text-xl font-bold tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-lavender" />
+          <p id="pinErrorMsg" class="text-xs font-bold text-coral mt-1.5 min-h-[16px]"></p>
+        </div>
+
+        <button type="submit"
+          class="w-full btn-retro bg-coral text-white font-display font-bold text-sm py-3 px-4 rounded-2xl">
+          Buka Creator Studio 🔓
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- CREATOR MODE MODAL (ADMIN-ONLY CUSTOMIZATION & SHAREABLE LINK)          -->
+  <!-- ======================================================================= -->
+  <div id="creatorModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-ink/50 backdrop-blur-sm">
+    <div
+      class="bg-cream border-[3px] border-ink shadow-retro-lg rounded-3xl w-full max-w-lg max-h-[90dvh] flex flex-col overflow-hidden">
+      <!-- Modal Header -->
+      <div class="bg-peach px-5 py-4 border-b-2 border-ink flex items-center justify-between">
+        <div>
+          <span
+            class="font-mono text-[10px] font-bold uppercase tracking-wider bg-mint text-ink border border-ink px-2 py-0.5 rounded-full">ADMIN
+            STUDIO • TERVERIFIKASI</span>
+          <h3 class="font-display text-lg font-extrabold text-ink mt-1">Kustomisasi Kado &amp; Undangan</h3>
+        </div>
+        <button id="closeCreatorBtn" type="button"
+          class="w-9 h-9 rounded-full bg-white border-2 border-ink font-bold flex items-center justify-center hover:bg-coral hover:text-white transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Form -->
+      <div class="p-5 overflow-y-auto space-y-4 text-sm">
+        <!-- Admin Security PIN Manager -->
+        <div class="bg-butter/60 border-2 border-ink rounded-2xl p-3.5">
+          <div class="flex items-center justify-between mb-1">
+            <label for="cfgAdminPin" class="font-mono text-xs font-bold uppercase text-ink">🔐 PIN Keamanan Admin (4–6
+              Digit)</label>
+            <span class="text-[10px] font-bold bg-white border border-ink px-2 py-0.5 rounded-full">SHA-256
+              Protected</span>
+          </div>
+          <input id="cfgAdminPin" type="text" inputmode="numeric" maxlength="6" placeholder="Default: 2026"
+            class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-mono font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-coral" />
+          <p class="text-[11px] text-ink/70 mt-1">
+            PIN ini di-hash secara kriptografis di dalam link penerima sehingga tidak bisa dibaca orang lain.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-xs mb-1">Nama Teman / Penerima</label>
+            <input id="cfgRecipient" type="text" placeholder="Contoh: Nadya"
+              class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-coral" />
+          </div>
+          <div>
+            <label class="block font-bold text-xs mb-1">Nama Kamu / Pengirim</label>
+            <input id="cfgSender" type="text" placeholder="Contoh: Raka"
+              class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-coral" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-xs mb-1">Nomor WhatsApp Kamu (Opsional, buat tombol balas)</label>
+          <input id="cfgPhone" type="tel" placeholder="Contoh: 6281234567890 (awali 62)"
+            class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-coral" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-xs mb-1">Pesan Ajakan Utama</label>
+          <textarea id="cfgMessage" rows="3"
+            class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-coral"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-xs mb-1">Default Tanggal &amp; Jam</label>
+            <input id="cfgDateTime" type="text"
+              class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-coral" />
+          </div>
+          <div>
+            <label class="block font-bold text-xs mb-1">Default Lokasi</label>
+            <input id="cfgLocation" type="text"
+              class="w-full bg-white border-2 border-ink rounded-xl px-3 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-coral" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-xs mb-1.5">4 Pilihan Aktivitas Date (Emoji, Judul &amp; Subjudul)</label>
+          <div class="space-y-2">
+            <div class="grid grid-cols-5 gap-2">
+              <input id="cfgAct0" type="text" placeholder="Emoji + Judul"
+                class="col-span-3 bg-white border-2 border-ink rounded-xl px-3 py-2 text-xs font-bold" />
+              <input id="cfgSub0" type="text" placeholder="Subjudul"
+                class="col-span-2 bg-white border-2 border-ink rounded-xl px-2.5 py-2 text-xs font-medium" />
+            </div>
+            <div class="grid grid-cols-5 gap-2">
+              <input id="cfgAct1" type="text" placeholder="Emoji + Judul"
+                class="col-span-3 bg-white border-2 border-ink rounded-xl px-3 py-2 text-xs font-bold" />
+              <input id="cfgSub1" type="text" placeholder="Subjudul"
+                class="col-span-2 bg-white border-2 border-ink rounded-xl px-2.5 py-2 text-xs font-medium" />
+            </div>
+            <div class="grid grid-cols-5 gap-2">
+              <input id="cfgAct2" type="text" placeholder="Emoji + Judul"
+                class="col-span-3 bg-white border-2 border-ink rounded-xl px-3 py-2 text-xs font-bold" />
+              <input id="cfgSub2" type="text" placeholder="Subjudul"
+                class="col-span-2 bg-white border-2 border-ink rounded-xl px-2.5 py-2 text-xs font-medium" />
+            </div>
+            <div class="grid grid-cols-5 gap-2">
+              <input id="cfgAct3" type="text" placeholder="Emoji + Judul"
+                class="col-span-3 bg-white border-2 border-ink rounded-xl px-3 py-2 text-xs font-bold" />
+              <input id="cfgSub3" type="text" placeholder="Subjudul"
+                class="col-span-2 bg-white border-2 border-ink rounded-xl px-2.5 py-2 text-xs font-medium" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer Actions -->
+      <div class="p-4 bg-white border-t-2 border-ink space-y-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button id="saveConfigBtn" type="button"
+            class="btn-retro bg-mint text-ink font-display font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl">
+            💾 Terapkan ke Halaman
+          </button>
+          <button id="copyShareLinkBtn" type="button"
+            class="btn-retro bg-coral text-white font-display font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl">
+            🔗 Salin Link Khusus Penerima
+          </button>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button id="previewRecipientBtn" type="button"
+            class="btn-retro bg-butter text-ink font-display font-bold text-xs py-2 px-3 rounded-xl">
+            👁️ Pratinjau Mode Penerima
+          </button>
+          <button id="lockAdminBtn" type="button"
+            class="btn-retro bg-cream text-ink font-display font-bold text-xs py-2 px-3 rounded-xl">
+            🔒 Kunci Sesi Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * =========================================================================
+     * 1. WEB AUDIO API PROCEDURAL SOUND EFFECTS (NO EXTERNAL ASSETS NEEDED)
+     * =========================================================================
+     */
+    class SoundFX {
+      constructor() {
+        this.enabled = true;
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.12, delay = 0) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(gainVal, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) { }
+      }
+
+      tapGift(step) {
+        const baseNotes = [392.0, 493.88, 587.33];
+        const freq = baseNotes[Math.min(step - 1, 2)] || 440;
+        this.playTone(freq, 'triangle', 0.18, 0.16, 0);
+        this.playTone(freq * 1.5, 'sine', 0.12, 0.08, 0.04);
+      }
+
+      openGift() {
+        const chord = [523.25, 659.25, 783.99, 1046.5];
+        chord.forEach((f, idx) => {
+          this.playTone(f, 'triangle', 0.35, 0.14, idx * 0.07);
+        });
+      }
+
+      scratchTick() {
+        this.playTone(950 + Math.random() * 400, 'sine', 0.03, 0.025, 0);
+      }
+
+      dodgeBoing() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(280, now);
+          osc.frequency.exponentialRampToValueAtTime(520, now + 0.14);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.16);
+        } catch (e) { }
+      }
+
+      celebrate() {
+        const fanfare = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+        fanfare.forEach((f, idx) => {
+          this.playTone(f, 'triangle', 0.45, 0.15, idx * 0.08);
+        });
+      }
+    }
+
+    const sfx = new SoundFX();
+
+    /**
+     * =========================================================================
+     * 2. APPLICATION STATE, SHA-256 PIN HASHING & URL HASH ENCODING
+     * =========================================================================
+     */
+    const DEFAULT_ADMIN_PIN = '2026';
+
+    const defaultConfig = {
+      recipient: 'Kamu',
+      sender: 'Aku',
+      phone: '',
+      message: 'Setelah kemarin gak jadi karena satu dan lain hal, jadi gw kepikiran buat ngajak lagii.',
+      dateTime: 'Mungkinn Hari Minggu, jam 16.30 WIB',
+      location: 'Aku jemput / Ketemu di tempat',
+      activities: [
+        '☕ Ngopi & Deep Talk',
+        '🎬 Nonton Bioskop',
+        '🍜 Kulineran Malam',
+        '🎲 Terserah Kamu Aja'
+      ],
+      activitySubtitles: [
+        'Chill & Santai',
+        'Seru & Cozy',
+        'Jajan Hunting',
+        'Surprise Me!'
+      ],
+      pinHash: ''
+    };
+
+    let appConfig = { ...defaultConfig };
+    let currentPlainAdminPin = DEFAULT_ADMIN_PIN;
+    let isAdminAuthenticated = true;
+    let selectedActivityIndex = 0;
+    let tapCount = 0;
+    const maxTaps = 3;
+    let isScratchRevealed = false;
+    let dodgeCount = 0;
+
+    async function hashPinSHA256(pinStr) {
+      const cleanPin = String(pinStr || '').trim();
+      try {
+        if (window.crypto && window.crypto.subtle) {
+          const data = new TextEncoder().encode(`vgift-admin-salt::${cleanPin}`);
+          const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+      } catch (e) { }
+      let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+      const str = `vgift-admin-salt::${cleanPin}`;
+      for (let i = 0; i < str.length; i++) {
+        const ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+    }
+
+    function encodeConfigToHash(cfg) {
+      const safePayload = {
+        recipient: cfg.recipient,
+        sender: cfg.sender,
+        phone: cfg.phone,
+        message: cfg.message,
+        dateTime: cfg.dateTime,
+        location: cfg.location,
+        activities: cfg.activities,
+        activitySubtitles: cfg.activitySubtitles,
+        pinHash: cfg.pinHash
+      };
+      const jsonStr = JSON.stringify(safePayload);
+      const bytes = new TextEncoder().encode(jsonStr);
+      let binStr = '';
+      bytes.forEach(b => binStr += String.fromCharCode(b));
+      return `gift=${btoa(binStr)}`;
+    }
+
+    function decodeConfigFromHash(hashStr) {
+      try {
+        const raw = hashStr.replace(/^#/, '').trim();
+        if (!raw) return null;
+        const base64Part = raw.startsWith('gift=') ? raw.slice(5) : raw;
+        const binStr = atob(base64Part);
+        const bytes = new Uint8Array(binStr.length);
+        for (let i = 0; i < binStr.length; i++) {
+          bytes[i] = binStr.charCodeAt(i);
+        }
+        const jsonStr = new TextDecoder().decode(bytes);
+        const parsed = JSON.parse(jsonStr);
+        return {
+          ...defaultConfig,
+          ...parsed,
+          activities: Array.isArray(parsed.activities) && parsed.activities.length === 4
+            ? parsed.activities
+            : defaultConfig.activities,
+          activitySubtitles: Array.isArray(parsed.activitySubtitles) && parsed.activitySubtitles.length === 4
+            ? parsed.activitySubtitles
+            : defaultConfig.activitySubtitles
+        };
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function updateAdminVisibilityUI() {
+      const gearBtn = document.getElementById('openCreatorBtn');
+      const adminBadge = document.getElementById('adminActiveBadge');
+      const footerHint = document.getElementById('footerHintText');
+
+      if (isAdminAuthenticated) {
+        gearBtn.classList.remove('hidden');
+        adminBadge.classList.remove('hidden');
+        footerHint.textContent = 'Mode Admin Aktif • Klik ⚙️ untuk kustomisasi';
+      } else {
+        gearBtn.classList.add('hidden');
+        adminBadge.classList.add('hidden');
+        footerHint.textContent = 'made for special reason';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 3. UI RENDERING & STAGE MANAGEMENT
+     * =========================================================================
+     */
+    function showToast(icon, text) {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastText').textContent = text;
+      banner.classList.remove('opacity-0', '-translate-y-3');
+      banner.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        banner.classList.remove('opacity-100', 'translate-y-0');
+        banner.classList.add('opacity-0', '-translate-y-3');
+      }, 2600);
+    }
+
+    function updateStepIndicator(stageNum) {
+      const dots = document.querySelectorAll('.step-dot');
+      dots.forEach((dot, idx) => {
+        if (idx === stageNum - 1) {
+          dot.classList.remove('w-2.5', 'bg-white');
+          dot.classList.add('w-8', 'bg-coral');
+        } else if (idx < stageNum - 1) {
+          dot.classList.remove('w-8', 'bg-white');
+          dot.classList.add('w-2.5', 'bg-mint');
+        } else {
+          dot.classList.remove('w-8', 'bg-coral', 'bg-mint');
+          dot.classList.add('w-2.5', 'bg-white');
+        }
+      });
+    }
+
+    function goToStage(stageNum) {
+      ['stage1', 'stage2', 'stage3', 'stage4'].forEach((id, idx) => {
+        const el = document.getElementById(id);
+        if (idx === stageNum - 1) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+      updateStepIndicator(stageNum);
+
+      if (stageNum === 2) {
+        requestAnimationFrame(() => initScratchCanvas());
+      }
+    }
+
+    function applyConfigToUI() {
+      const rec = appConfig.recipient || 'Kamu';
+      const snd = appConfig.sender || 'Aku';
+
+      document.getElementById('headerBadge').textContent = `FOR ${rec.toUpperCase()}`;
+      document.getElementById('s1RecipientName').textContent = rec;
+      document.getElementById('s2RecipientName').textContent = rec;
+      document.getElementById('s3SenderName').textContent = snd;
+      document.getElementById('s3MainMessage').textContent = `"${appConfig.message}"`;
+
+      document.getElementById('dateTimeInput').value = appConfig.dateTime;
+      document.getElementById('locationInput').value = appConfig.location;
+
+      renderActivityCards();
+    }
+
+    function renderActivityCards() {
+      const grid = document.getElementById('activityGrid');
+      grid.innerHTML = '';
+
+      appConfig.activities.forEach((act, idx) => {
+        const isSelected = idx === selectedActivityIndex;
+        const sub = (appConfig.activitySubtitles && appConfig.activitySubtitles[idx]) || 'Vibe Pilihan';
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `bento-card rounded-2xl p-3.5 text-left flex items-center justify-between gap-2 ${isSelected ? 'selected' : ''}`;
+        card.innerHTML = `
+          <div>
+            <span class="inline-block font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-cream border border-ink mb-1">
+              ${sub}
+            </span>
+            <p class="font-display font-bold text-sm sm:text-base text-ink">${act}</p>
+          </div>
+          <div class="w-6 h-6 rounded-full border-2 border-ink flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-coral text-white' : 'bg-white'}">
+            ${isSelected ? '✓' : ''}
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          selectedActivityIndex = idx;
+          sfx.tapGift(2);
+          renderActivityCards();
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    /**
+     * =========================================================================
+     * 4. STAGE 1: 3D GIFT BOX UNBOXING & SPARKLE PARTICLES
+     * =========================================================================
+     */
+    function spawnSparkles(x, y) {
+      const emojis = ['✨', '💖', '🌟', '🎀', '💫'];
+      for (let i = 0; i < 8; i++) {
+        const span = document.createElement('span');
+        span.className = 'sparkle-dot';
+        span.textContent = emojis[i % emojis.length];
+        span.style.left = `${x}px`;
+        span.style.top = `${y}px`;
+        const angle = (Math.PI * 2 * i) / 8;
+        const dist = 55 + Math.random() * 45;
+        span.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+        span.style.setProperty('--ty', `${Math.sin(angle) * dist - 20}px`);
+        document.body.appendChild(span);
+        setTimeout(() => span.remove(), 850);
+      }
+    }
+
+    function handleGiftTap(e) {
+      if (tapCount >= maxTaps) return;
+
+      tapCount++;
+      const wrapper = document.getElementById('giftWrapper');
+      const lid = document.getElementById('giftLid');
+      const bar = document.getElementById('tapProgressBar');
+      const counter = document.getElementById('tapCounter');
+      const instruction = document.getElementById('tapInstruction');
+
+      const rect = wrapper.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || (rect.left + rect.width / 2);
+      const clientY = e.clientY || (e.touches && e.touches[0]?.clientY) || (rect.top + rect.height / 2);
+      spawnSparkles(clientX, clientY);
+
+      if (navigator.vibrate) navigator.vibrate(40);
+
+      wrapper.classList.remove('gift-shake');
+      void wrapper.offsetWidth;
+      wrapper.classList.add('gift-shake');
+
+      const pct = Math.round((tapCount / maxTaps) * 100);
+      bar.style.width = `${pct}%`;
+      counter.textContent = `${tapCount} / ${maxTaps}`;
+
+      if (tapCount < maxTaps) {
+        sfx.tapGift(tapCount);
+        const hints = [
+          'Sedikit lagi! Ketuk 2x lagi ✨',
+          'Hampir terbuka! Satu ketukan terakhir! 🔥'
+        ];
+        instruction.textContent = hints[tapCount - 1];
+      } else {
+        sfx.openGift();
+        instruction.textContent = 'Segel terbuka! Membuka isi kado... 🎉';
+        lid.classList.add('lid-open');
+        setTimeout(() => {
+          goToStage(2);
+        }, 720);
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 5. STAGE 2: HTML5 CANVAS SCRATCH-OFF GOLDEN TICKET
+     * =========================================================================
+     */
+    let scratchCtx = null;
+    let isDrawing = false;
+    let lastCheckTime = 0;
+
+    function initScratchCanvas() {
+      const canvas = document.getElementById('scratchCanvas');
+      const container = canvas.parentElement;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = container.getBoundingClientRect();
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.opacity = '1';
+      canvas.style.pointerEvents = 'auto';
+
+      scratchCtx = canvas.getContext('2d');
+      scratchCtx.scale(dpr, dpr);
+
+      const grad = scratchCtx.createLinearGradient(0, 0, rect.width, rect.height);
+      grad.addColorStop(0, '#D4D8DF');
+      grad.addColorStop(0.3, '#F3F5F8');
+      grad.addColorStop(0.6, '#BFC5D0');
+      grad.addColorStop(1, '#E2E6EC');
+
+      scratchCtx.globalCompositeOperation = 'source-over';
+      scratchCtx.fillStyle = grad;
+      scratchCtx.fillRect(0, 0, rect.width, rect.height);
+
+      scratchCtx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      scratchCtx.lineWidth = 14;
+      for (let i = -rect.height; i < rect.width + rect.height; i += 36) {
+        scratchCtx.beginPath();
+        scratchCtx.moveTo(i, 0);
+        scratchCtx.lineTo(i + rect.height, rect.height);
+        scratchCtx.stroke();
+      }
+
+      scratchCtx.fillStyle = '#1E1B18';
+      scratchCtx.font = '700 15px "Space Grotesk", sans-serif';
+      scratchCtx.textAlign = 'center';
+      scratchCtx.textBaseline = 'middle';
+      scratchCtx.fillText('GOSOK DI SINI UNTUK BUKAAA', rect.width / 2, rect.height / 2 - 8);
+
+      scratchCtx.font = '500 12px "Plus Jakarta Sans", sans-serif';
+      scratchCtx.fillStyle = 'rgba(30, 27, 24, 0.7)';
+      scratchCtx.fillText('(Usap pakai jari atau mouse)', rect.width / 2, rect.height / 2 + 16);
+
+      isScratchRevealed = false;
+      document.getElementById('scratchPercentText').textContent = 'Tergosok: 0%';
+      document.getElementById('toStage3Btn').classList.add('hidden');
+    }
+
+    function getPointerPos(canvas, evt) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function scratchAt(x, y) {
+      if (!scratchCtx || isScratchRevealed) return;
+      scratchCtx.globalCompositeOperation = 'destination-out';
+      scratchCtx.beginPath();
+      scratchCtx.arc(x, y, 24, 0, Math.PI * 2);
+      scratchCtx.fill();
+
+      const now = Date.now();
+      if (now - lastCheckTime > 120) {
+        lastCheckTime = now;
+        sfx.scratchTick();
+        calculateScratchPercentage();
+      }
+    }
+
+    function calculateScratchPercentage() {
+      const canvas = document.getElementById('scratchCanvas');
+      if (!scratchCtx || isScratchRevealed) return;
+
+      const imgData = scratchCtx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imgData.data;
+      let transparentCount = 0;
+      const step = 16;
+
+      for (let i = 3; i < pixels.length; i += step) {
+        if (pixels[i] === 0) transparentCount++;
+      }
+
+      const totalSampled = pixels.length / step;
+      const percent = Math.min(100, Math.round((transparentCount / totalSampled) * 100));
+      document.getElementById('scratchPercentText').textContent = `Tergosok: ${percent}%`;
+
+      if (percent >= 48) {
+        revealAllScratch();
+      }
+    }
+
+    function revealAllScratch() {
+      if (isScratchRevealed) return;
+      isScratchRevealed = true;
+      const canvas = document.getElementById('scratchCanvas');
+      canvas.style.opacity = '0';
+      canvas.style.pointerEvents = 'none';
+      document.getElementById('scratchPercentText').textContent = 'Tergosok: 100% 🎉';
+      document.getElementById('toStage3Btn').classList.remove('hidden');
+      sfx.tapGift(3);
+      showToast('YAYY YOUUUU GOT ITT');
+    }
+
+    /**
+     * =========================================================================
+     * 6. STAGE 4: PLAYFUL DODGING BUTTON & CONFETTI CELEBRATION
+     * =========================================================================
+     */
+    const funnyDodgeMessages = [
+      'Eits, meleset! Yakin nih? 😜',
+      'Coba pikir lagi deh 🤔',
+      'Error 404: Penolakan tidak ditemukan 🤖',
+      'Tombol ini lagi pemanasan lari pagi 🏃‍♂️💨',
+      'Udah pencet "Gas, Ayo!" aja di sebelahnya'
+    ];
+
+    function handleNoButtonDodge(e) {
+      const noBtn = document.getElementById('noBtn');
+      const arena = document.getElementById('decisionArena');
+      const feedback = document.getElementById('dodgeFeedback');
+
+      if (dodgeCount >= 5) {
+        triggerAcceptance();
+        return;
+      }
+
+      if (e) e.preventDefault();
+      sfx.dodgeBoing();
+
+      const msg = funnyDodgeMessages[dodgeCount % funnyDodgeMessages.length];
+      feedback.textContent = msg;
+      dodgeCount++;
+
+      if (dodgeCount >= 5) {
+        noBtn.style.position = 'static';
+        noBtn.style.transform = 'none';
+        noBtn.className = 'btn-retro z-20 bg-mint text-ink font-display font-bold text-sm px-5 py-3 rounded-2xl cursor-pointer';
+        noBtn.textContent = 'Oke dehhh, ayo!';
+        feedback.textContent = 'Nah gitu dong, udah cape ngehindarr nihh';
+        return;
+      }
+
+      const arenaRect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = Math.max(10, arenaRect.width - btnRect.width - 16);
+      const maxY = Math.max(8, arenaRect.height - btnRect.height - 16);
+
+      const randX = Math.floor(Math.random() * maxX) + 8;
+      const randY = Math.floor(Math.random() * maxY) + 8;
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${randX}px`;
+      noBtn.style.top = `${randY}px`;
+    }
+
+    function triggerAcceptance() {
+      sfx.celebrate();
+      launchConfetti();
+
+      const chosenActivity = appConfig.activities[selectedActivityIndex] || appConfig.activities[0];
+      const chosenTime = document.getElementById('dateTimeInput').value.trim() || appConfig.dateTime;
+      const chosenLoc = document.getElementById('locationInput').value.trim() || appConfig.location;
+
+      document.getElementById('ticketPassenger').textContent = appConfig.recipient || 'Kamu';
+      document.getElementById('ticketHost').textContent = appConfig.sender || 'Aku';
+      document.getElementById('ticketActivity').textContent = chosenActivity;
+      document.getElementById('ticketDateTime').textContent = chosenTime;
+      document.getElementById('ticketLocation').textContent = chosenLoc;
+
+      const randomCode = Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('ticketCode').textContent = `PASS-${randomCode}-VIP`;
+
+      goToStage(4);
+    }
+
+    /**
+     * =========================================================================
+     * 7. CONFETTI PARTICLE ENGINE (HTML5 CANVAS)
+     * =========================================================================
+     */
+    function launchConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ['#FF6B6B', '#FFD6BA', '#B8F2E6', '#E2D4FF', '#FFF1A8', '#1E1B18'];
+      const pieces = Array.from({ length: 110 }, () => ({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 140,
+        y: canvas.height * 0.55,
+        vx: (Math.random() - 0.5) * 16,
+        vy: -Math.random() * 15 - 5,
+        size: Math.random() * 8 + 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 12
+      }));
+
+      let frame = 0;
+      function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.42;
+          p.vx *= 0.99;
+          p.rot += p.vRot;
+
+          if (p.y < canvas.height + 30) active = true;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+          ctx.restore();
+        });
+
+        frame++;
+        if (active && frame < 180) {
+          requestAnimationFrame(animateConfetti);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      animateConfetti();
+    }
+
+    /**
+     * =========================================================================
+     * 8. CLIPBOARD HELPER & WHATSAPP SHARE
+     * =========================================================================
+     */
+    function copyTextFallback(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) { }
+      document.body.removeChild(textarea);
+    }
+
+    function buildTicketSummaryText() {
+      const act = document.getElementById('ticketActivity').textContent;
+      const dt = document.getElementById('ticketDateTime').textContent;
+      const loc = document.getElementById('ticketLocation').textContent;
+      const sender = appConfig.sender || 'Kamu';
+      return `Halo ${sender}! Aku udah buka kado virtualnyaaa\n\n *DETAIL DATE TICKET*\n• Aktivitas: ${act}\n• Waktu: ${dt}\n• Lokasi: ${loc}\n\nSee you soon yahh!!`;
+    }
+
+    /**
+     * =========================================================================
+     * 9. ADMIN PIN AUTHENTICATION, CREATOR MODAL & INITIALIZATION
+     * =========================================================================
+     */
+    function requestAdminAccess() {
+      if (isAdminAuthenticated) {
+        openCreatorModal();
+        return;
+      }
+      const pinModal = document.getElementById('adminPinModal');
+      const pinInput = document.getElementById('adminPinInput');
+      const errMsg = document.getElementById('pinErrorMsg');
+      pinInput.value = '';
+      errMsg.textContent = '';
+      pinModal.classList.remove('hidden');
+      pinModal.classList.add('flex');
+      setTimeout(() => pinInput.focus(), 60);
+    }
+
+    function closeAdminPinModal() {
+      const pinModal = document.getElementById('adminPinModal');
+      pinModal.classList.add('hidden');
+      pinModal.classList.remove('flex');
+    }
+
+    function openCreatorModal() {
+      if (!isAdminAuthenticated) {
+        requestAdminAccess();
+        return;
+      }
+
+      document.getElementById('cfgAdminPin').value = currentPlainAdminPin || DEFAULT_ADMIN_PIN;
+      document.getElementById('cfgRecipient').value = appConfig.recipient;
+      document.getElementById('cfgSender').value = appConfig.sender;
+      document.getElementById('cfgPhone').value = appConfig.phone || '';
+      document.getElementById('cfgMessage').value = appConfig.message;
+      document.getElementById('cfgDateTime').value = appConfig.dateTime;
+      document.getElementById('cfgLocation').value = appConfig.location;
+      appConfig.activities.forEach((act, idx) => {
+        document.getElementById(`cfgAct${idx}`).value = act;
+        document.getElementById(`cfgSub${idx}`).value = (appConfig.activitySubtitles && appConfig.activitySubtitles[idx]) || '';
+      });
+
+      const modal = document.getElementById('creatorModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCreatorModal() {
+      const modal = document.getElementById('creatorModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function collectCreatorForm() {
+      const rawPinInput = document.getElementById('cfgAdminPin').value.replace(/[^0-9]/g, '');
+      const validPin = rawPinInput.length >= 4 ? rawPinInput.slice(0, 6) : DEFAULT_ADMIN_PIN;
+      currentPlainAdminPin = validPin;
+      const computedHash = await hashPinSHA256(validPin);
+
+      const newCfg = {
+        recipient: document.getElementById('cfgRecipient').value.trim() || 'Kamu',
+        sender: document.getElementById('cfgSender').value.trim() || 'Aku',
+        phone: document.getElementById('cfgPhone').value.replace(/[^0-9]/g, ''),
+        message: document.getElementById('cfgMessage').value.trim() || defaultConfig.message,
+        dateTime: document.getElementById('cfgDateTime').value.trim() || defaultConfig.dateTime,
+        location: document.getElementById('cfgLocation').value.trim() || defaultConfig.location,
+        activities: [0, 1, 2, 3].map(i =>
+          document.getElementById(`cfgAct${i}`).value.trim() || defaultConfig.activities[i]
+        ),
+        activitySubtitles: [0, 1, 2, 3].map(i =>
+          document.getElementById(`cfgSub${i}`).value.trim() || defaultConfig.activitySubtitles[i]
+        ),
+        pinHash: computedHash
+      };
+      appConfig = newCfg;
+
+      const encodedHash = encodeConfigToHash(appConfig);
+      window.location.hash = encodedHash;
+      applyConfigToUI();
+      return `${window.location.origin}${window.location.pathname}#${encodedHash}`;
+    }
+
+    function resetGiftFlowToStart() {
+      tapCount = 0;
+      dodgeCount = 0;
+      document.getElementById('tapProgressBar').style.width = '0%';
+      document.getElementById('tapCounter').textContent = '0 / 3';
+      document.getElementById('tapInstruction').textContent = 'Ketuk 3x untuk membuka segel kado';
+      document.getElementById('giftLid').classList.remove('lid-open');
+      document.getElementById('dodgeFeedback').textContent = '';
+
+      const nb = document.getElementById('noBtn');
+      nb.style.position = 'static';
+      nb.className = 'z-10 bg-white border-2 border-ink shadow-retro-sm text-ink font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer select-none';
+      nb.textContent = 'Nanti dulu / Mikir dulu';
+
+      goToStage(1);
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const hashCfg = decodeConfigFromHash(window.location.hash);
+      if (hashCfg) {
+        appConfig = hashCfg;
+        isAdminAuthenticated = false;
+        currentPlainAdminPin = '';
+      } else {
+        isAdminAuthenticated = true;
+        currentPlainAdminPin = DEFAULT_ADMIN_PIN;
+        appConfig.pinHash = await hashPinSHA256(DEFAULT_ADMIN_PIN);
+      }
+
+      updateAdminVisibilityUI();
+      applyConfigToUI();
+
+      // Master Sound Toggle
+      document.getElementById('soundToggleBtn').addEventListener('click', () => {
+        sfx.enabled = !sfx.enabled;
+        document.getElementById('soundIcon').textContent = sfx.enabled ? '🔊' : '🔇';
+        if (sfx.enabled) {
+          sfx.tapGift(1);
+        }
+        showToast(sfx.enabled ? '🔊' : '🔇', sfx.enabled ? 'Efek suara aktif' : 'Efek suara dimatikan');
+      });
+
+      // Stage 1: Gift Box Interaction
+      const giftBoxArea = document.getElementById('giftBoxArea');
+      giftBoxArea.addEventListener('click', handleGiftTap);
+      giftBoxArea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleGiftTap(e);
+        }
+      });
+
+      // Stage 2: Scratch Canvas Events
+      const scratchCanvas = document.getElementById('scratchCanvas');
+      scratchCanvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        const pos = getPointerPos(scratchCanvas, e);
+        scratchAt(pos.x, pos.y);
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        const pos = getPointerPos(scratchCanvas, e);
+        scratchAt(pos.x, pos.y);
+      });
+      window.addEventListener('mouseup', () => {
+        isDrawing = false;
+      });
+
+      scratchCanvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isDrawing = true;
+        const pos = getPointerPos(scratchCanvas, e);
+        scratchAt(pos.x, pos.y);
+      }, { passive: false });
+
+      scratchCanvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const pos = getPointerPos(scratchCanvas, e);
+        scratchAt(pos.x, pos.y);
+      }, { passive: false });
+
+      scratchCanvas.addEventListener('touchend', () => {
+        isDrawing = false;
+      });
+
+      document.getElementById('revealAllBtn').addEventListener('click', revealAllScratch);
+      document.getElementById('toStage3Btn').addEventListener('click', () => {
+        sfx.tapGift(2);
+        goToStage(3);
+      });
+
+      // Stage 3 & 4: Decision Buttons
+      document.getElementById('yesBtn').addEventListener('click', triggerAcceptance);
+
+      const noBtn = document.getElementById('noBtn');
+      noBtn.addEventListener('mouseenter', (e) => {
+        if (dodgeCount < 5) handleNoButtonDodge(e);
+      });
+      noBtn.addEventListener('click', handleNoButtonDodge);
+
+      // Ticket Actions
+      document.getElementById('whatsappBtn').addEventListener('click', () => {
+        const msg = encodeURIComponent(buildTicketSummaryText());
+        const phone = appConfig.phone ? appConfig.phone : '';
+        const waUrl = phone
+          ? `https://wa.me/${phone}?text=${msg}`
+          : `https://wa.me/?text=${msg}`;
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+      });
+
+      document.getElementById('copyTicketBtn').addEventListener('click', () => {
+        copyTextFallback(buildTicketSummaryText());
+        showToast('📋', 'Detail tiket disalin! Silakan screenshot juga ya 📸');
+      });
+
+      document.getElementById('replayBtn').addEventListener('click', resetGiftFlowToStart);
+
+      // Discrete Admin Re-entry Triggers
+      document.getElementById('discreteAdminLockBtn').addEventListener('click', requestAdminAccess);
+
+      window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+          e.preventDefault();
+          requestAdminAccess();
+        }
+      });
+
+      let badgeTapCount = 0;
+      let badgeTapTimer = null;
+      document.getElementById('vipBadgeTrigger').addEventListener('click', () => {
+        badgeTapCount++;
+        clearTimeout(badgeTapTimer);
+        if (badgeTapCount >= 5) {
+          badgeTapCount = 0;
+          requestAdminAccess();
+        } else {
+          badgeTapTimer = setTimeout(() => { badgeTapCount = 0; }, 1200);
+        }
+      });
+
+      // Admin PIN Verification Form Submission
+      document.getElementById('closePinModalBtn').addEventListener('click', closeAdminPinModal);
+      document.getElementById('adminPinModal').addEventListener('click', (e) => {
+        if (e.target.id === 'adminPinModal') closeAdminPinModal();
+      });
+
+      document.getElementById('adminPinForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const enteredPin = document.getElementById('adminPinInput').value.trim();
+        const enteredHash = await hashPinSHA256(enteredPin);
+        const expectedHash = appConfig.pinHash || await hashPinSHA256(DEFAULT_ADMIN_PIN);
+
+        if (enteredHash === expectedHash) {
+          isAdminAuthenticated = true;
+          currentPlainAdminPin = enteredPin;
+          closeAdminPinModal();
+          updateAdminVisibilityUI();
+          sfx.tapGift(3);
+          showToast('🔓', 'Verifikasi Admin berhasil!');
+          openCreatorModal();
+        } else {
+          sfx.dodgeBoing();
+          const card = document.getElementById('adminPinCard');
+          card.classList.remove('gift-shake');
+          void card.offsetWidth;
+          card.classList.add('gift-shake');
+          document.getElementById('pinErrorMsg').textContent = '❌ PIN salah! Akses kustomisasi ditolak.';
+          document.getElementById('adminPinInput').value = '';
+          document.getElementById('adminPinInput').focus();
+        }
+      });
+
+      // Creator Mode Modal Events
+      document.getElementById('openCreatorBtn').addEventListener('click', requestAdminAccess);
+      document.getElementById('closeCreatorBtn').addEventListener('click', closeCreatorModal);
+      document.getElementById('creatorModal').addEventListener('click', (e) => {
+        if (e.target.id === 'creatorModal') closeCreatorModal();
+      });
+
+      document.getElementById('saveConfigBtn').addEventListener('click', async () => {
+        await collectCreatorForm();
+        closeCreatorModal();
+        showToast('✅', 'Kustomisasi berhasil disimpan!');
+      });
+
+      document.getElementById('copyShareLinkBtn').addEventListener('click', async () => {
+        const shareUrl = await collectCreatorForm();
+        copyTextFallback(shareUrl);
+        showToast('🔗', 'Link khusus penerima disalin (Mode Admin terkunci di link ini)!');
+      });
+
+      document.getElementById('previewRecipientBtn').addEventListener('click', async () => {
+        await collectCreatorForm();
+        isAdminAuthenticated = false;
+        currentPlainAdminPin = '';
+        closeCreatorModal();
+        updateAdminVisibilityUI();
+        resetGiftFlowToStart();
+        showToast('👁️', 'Pratinjau Mode Penerima aktif (Kontrol Admin disembunyikan)');
+      });
+
+      document.getElementById('lockAdminBtn').addEventListener('click', async () => {
+        await collectCreatorForm();
+        isAdminAuthenticated = false;
+        currentPlainAdminPin = '';
+        closeCreatorModal();
+        updateAdminVisibilityUI();
+        showToast('🔒', 'Sesi Admin dikunci!');
+      });
+
+      window.addEventListener('resize', () => {
+        if (!document.getElementById('stage2').classList.contains('hidden') && !isScratchRevealed) {
+          initScratchCanvas();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
